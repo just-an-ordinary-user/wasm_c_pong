@@ -39,6 +39,93 @@ int right_paddle_dy = 0;
 
 int left_paddle_started = 0;
 
+// scores
+short int left_score = 0;
+short int right_score = 0;
+
+// Function to reverse a string
+void reverse_cstr(char *str, int length)
+{
+    int start = 0;
+    int end = length - 1;
+    while (start < end)
+    {
+        // Swap characters
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+
+        // Move towards the center
+        start++;
+        end--;
+    }
+}
+
+// Function to get the length of a string
+int cstr_len(const char *str)
+{
+    int length = 0;
+    while (str[length] != '\0')
+    {
+        length++;
+    }
+    return length;
+}
+
+// Function to convert an integer to a string
+void int_to_cstr(int num, char *str)
+{
+    int i = 0;
+    int isNegative = 0;
+
+    // Handle negative numbers
+    if (num < 0)
+    {
+        isNegative = 1;
+        num = -num;
+    }
+
+    // Process individual digits
+    do
+    {
+        int digit = num % 10;
+        str[i++] = '0' + digit;
+        num /= 10;
+    } while (num != 0);
+
+    // Add '-' for negative numbers
+    if (isNegative)
+    {
+        str[i++] = '-';
+    }
+
+    // Null-terminate the string
+    str[i] = '\0';
+
+    // Reverse the string
+    reverse_cstr(str, i);
+}
+
+void render_net()
+{
+    for (int i = 0; i < CNV_H / 20; ++i)
+    {
+        fill_rect(CNV_W / 2 - 2, 20 * i + 5, 4, 10, 0xffffffff);
+    }
+}
+
+void render_scores()
+{
+
+    char left_score_str[5];
+    int_to_cstr(left_score, left_score_str);
+    char right_score_str[5];
+    int_to_cstr(right_score, right_score_str);
+
+    fill_text(0, 24, left_score_str);
+    fill_text(CNV_W - cstr_len(right_score_str) * 16, 24, right_score_str);
+}
+
 void on_key_up(int key)
 {
     if (key == KEY_UP && key == KEY_DOWN)
@@ -84,6 +171,9 @@ int frame()
 {
     clear_rect(0, 0, CNV_W, CNV_H);
 
+    render_scores();
+    render_net();
+
     fill_rect(left_paddle_x, left_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT, 0x1212aaff);
     fill_rect(right_paddle_x, right_paddle_y, PADDLE_WIDTH, PADDLE_HEIGHT, 0x12aa12ff);
 
@@ -125,11 +215,13 @@ int frame()
     if (ball_x <= 0)
     {
         ball_dx *= -1;
+        right_score += 1;
     }
 
     if (ball_x + BALL_SIZE >= CNV_W)
     {
         ball_dx *= -1;
+        left_score += 1;
     }
 
     // Check collisions with walls
