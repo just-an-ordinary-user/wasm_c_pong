@@ -73,16 +73,16 @@ WebAssembly.instantiateStreaming(fetch('web_app.wasm'), {
 }).then((w) => {
     wasm = w;
 
-    console.log(wasm);
+    // console.log(wasm);
 
     const exports: TModuleExports = wasm.instance.exports as unknown as TModuleExports;
 
     document.addEventListener("keydown", (ev) => {
-        exports.on_key_down(ev.key.charCodeAt(0));
+        exports.on_key_down(ev.keyCode);
     });
 
     document.addEventListener("keyup", (ev) => {
-        exports.on_key_up(ev.key.charCodeAt(0));
+        exports.on_key_up(ev.keyCode);
     });
 
     exports.main();
@@ -90,3 +90,4 @@ WebAssembly.instantiateStreaming(fetch('web_app.wasm'), {
 
     // const buffer = exports.memory.buffer;
 }).catch((err) => console.error("[ERROR]: ", err));
+ 
