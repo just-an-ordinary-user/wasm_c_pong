@@ -22,6 +22,14 @@
 #define PADDLE_MARGIN BALL_SIZE
 
 #define RESET_ON_HIT_WALL
+
+#define WIN_SCORE 10
+#define FONT_SIZE 24
+#define WIN_MSG_PADDING 16
+
+#define YOU_WIN_MSG "You win"
+#define OPP_WIN_MSG "Opponent wins"
+
 #define CONTROL_LEFT_PADDLE_IN_REVERSE
 
 // ball
@@ -39,6 +47,7 @@ int left_paddle_dy = 0;
 int right_paddle_dy = 0;
 
 int left_paddle_started = 0;
+int paused = 0;
 
 // scores
 short int left_score = 0;
@@ -54,6 +63,13 @@ void on_key_up(int key)
 
 void on_key_down(int key)
 {
+    if (paused)
+    {
+        left_score = 0;
+        right_score = 0;
+        paused = 0;
+    }
+
     if (key == KEY_UP)
     {
         right_paddle_dy = -PADDLE_SPEED;
@@ -89,7 +105,7 @@ void on_key_down(int key)
 #endif
 }
 
-void check_win()
+void check_hit_walls()
 {
     if (ball_x <= 0)
     {
@@ -122,6 +138,44 @@ void check_win()
 #endif
         left_score += 1;
     }
+
+    if (left_score >= WIN_SCORE || right_score >= WIN_SCORE)
+    {
+        paused = 1;
+    }
+}
+
+void show_winner_msg(char *msg)
+{
+    int text_w = (cstr_len(msg) * (FONT_SIZE / 2));
+
+    int text_x = (CNV_W / 2 - text_w / 2);
+    int text_y = CNV_H / 2 + FONT_SIZE;
+
+    int rect_w = text_w + WIN_MSG_PADDING * 4;
+    int rect_h = FONT_SIZE + WIN_MSG_PADDING * 2;
+
+    int rect_x = CNV_W / 2 - rect_w / 2;
+    int rect_y = CNV_H / 2 - rect_h / 2;
+
+    fill_rect(rect_x - 4, rect_y - 4, rect_w + 8, rect_h + 8, 0x000000ff);
+
+    stroke_rect(rect_x, rect_y, rect_w, rect_h, 0xffffffff, 2);
+    stroke_rect(rect_x - 4, rect_y - 4, rect_w + 8, rect_h + 8, 0xffffffff, 2);
+
+    fill_text(text_x - WIN_MSG_PADDING, text_y - WIN_MSG_PADDING, msg);
+}
+
+void check_game_over()
+{
+    if (left_score >= WIN_SCORE && paused)
+    {
+        show_winner_msg(OPP_WIN_MSG);
+    }
+    if (right_score >= WIN_SCORE && paused)
+    {
+        show_winner_msg(YOU_WIN_MSG);
+    }
 }
 
 int frame()
@@ -150,7 +204,9 @@ int frame()
         right_paddle_y += right_paddle_dy;
     }
 
-    check_win();
+    check_hit_walls();
+
+    check_game_over();
 
     check_paddle_collision_with_walls(
         &right_paddle_y,

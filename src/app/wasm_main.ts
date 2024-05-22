@@ -59,6 +59,11 @@ WebAssembly.instantiateStreaming(fetch('web_app.wasm'), {
             ctx!.fillStyle = color_hex(color);
             ctx!.fillRect(x, y, width, height);
         },
+        stroke_rect(x: number, y: number, width: number, height: number, color: number, thickness: number) {
+            ctx!.strokeStyle = color_hex(color);
+            ctx!.lineWidth = thickness < 0 ? 1 : thickness;
+            ctx!.strokeRect(x, y, width, height);
+        },
         clear_rect(x: number, y: number, width: number, height: number) {
             ctx!.clearRect(x, y, width, height);
         },
@@ -73,7 +78,7 @@ WebAssembly.instantiateStreaming(fetch('web_app.wasm'), {
 }).then((w) => {
     wasm = w;
 
-    // console.log(wasm);
+    console.log(wasm);
 
     const exports: TModuleExports = wasm.instance.exports as unknown as TModuleExports;
 
