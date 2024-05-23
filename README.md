@@ -1,6 +1,6 @@
 # Pong
 
-[![thumbnail](./public/thumbnail.png)]
+[thumbnail](./public/thumbnail.png)
 
 ## Quick Start
 
