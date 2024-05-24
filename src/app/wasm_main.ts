@@ -13,6 +13,7 @@ type TModuleExports = {
     }
 }
 
+// This part of code was inspired by tsoding, I just moved the alpha to the end (https://github.com/tsoding)
 function color_hex(color: number) {
     const a = ((color>>(0*8))&0xFF).toString(16).padStart(2, '0');
     const b = ((color>>(1*8))&0xFF).toString(16).padStart(2, '0');

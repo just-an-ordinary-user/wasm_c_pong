@@ -1,6 +1,8 @@
 #ifndef __UTILS__H
 #define __UTILS__H
 
+// This part of code was inspired by tsoding (https://github.com/tsoding)
+
 // Function to reverse a string
 void reverse_cstr(char *str, int length)
 {
